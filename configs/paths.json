@@ -1,0 +1,6 @@
+{
+  "dp1_root": "C:/Users/PC1/Desktop/diplomovka",
+  "origa_table": "eda_outputs/origa_master_table.csv",
+  "refuge_table": "eda_outputs/refuge_master_table.csv",
+  "baseline_checkpoint": "checkpoints/baseline_unet.pth"
+}

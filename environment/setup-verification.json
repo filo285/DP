@@ -1,0 +1,12 @@
+{
+  "verified_at": "2026-09-06T16:16:47.173905+02:00",
+  "python": "3.13.3",
+  "torch": "2.10.0+cu128",
+  "cuda_runtime": "12.8",
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "pip_check": "passed",
+  "unet_cuda_forward": "passed, output shape 1x3x128x128",
+  "origa_rows_with_existing_image_and_mask": 650,
+  "refuge_rows_with_existing_image_and_mask": 1200,
+  "baseline_metrics_reproduced": false
+}

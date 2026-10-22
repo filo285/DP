@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+data/
+runs/
+*.pt
+*.pth
+*.pkl
+*_inspection.py
+thesis_inspection.txt
+.cache/
+.vs/
+.chart-data-*/
+tmp/
+output/

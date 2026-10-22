@@ -1,0 +1,11 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true,
+  "terminal.integrated.env.windows": {
+    "MPLCONFIGDIR": "${workspaceFolder}/.cache/matplotlib",
+    "NO_ALBUMENTATIONS_UPDATE": "1"
+  },
+  "files.exclude": {"**/__pycache__": true},
+  "search.exclude": {"**/.venv": true, "**/runs": true},
+  "editor.formatOnSave": false
+}

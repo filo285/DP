@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [{
+    "label": "DP2: verify environment",
+    "type": "process",
+    "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "args": ["scripts/check_environment.py"],
+    "options": {"cwd": "${workspaceFolder}"},
+    "problemMatcher": []
+  }]
+}
