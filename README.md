@@ -46,7 +46,19 @@ python -m venv .venv
 - `runs/`: future run outputs, excluded from Git.
 
 Keep data, model checkpoints and `.venv` outside Git. Back up experiment outputs
-separately. No remote repository is configured by this setup.
+separately.
+
+## Active learning
+
+Data preparation, simulated annotation reveal, subset training, mask-free pool scoring,
+and separate random/BALD/vCDR selection are implemented for MC dropout and deep ensembles.
+Use `scripts/run_active_learning.py prepare`, then `run` for the full recoverable
+study. `summarize` generates learning curves with acquisition markers; `freeze`
+and `evaluate-study` provide a separate held-out test-evaluation job.
+Individual `train`, `score`, `select`, and `reveal` commands remain available.
+See the [active learning usage guide](docs/active_learning.md) for configuration,
+commands, saved checkpoints, and verification. All six phases of the
+[implementation plan](docs/active_learning_implementation_plan.md) are implemented.
 
 ## MC-dropout uncertainty quantification
 

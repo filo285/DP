@@ -4,7 +4,7 @@ import numpy as np
 from torch.utils.data import Dataset
 
 from dp2.baseline import build_transforms
-from .state import resolve_path, validate_public
+from .state import resolve_path, sha256, validate_public
 
 
 class ImagePoolDataset(Dataset):
@@ -20,6 +20,8 @@ class ImagePoolDataset(Dataset):
     def __getitem__(self, index):
         row = self.frame.iloc[index]
         path = resolve_path(self.root, row.image_path)
+        if "image_sha256" in row and sha256(path) != row.image_sha256:
+            raise ValueError(f"Image content changed since preparation: {row.image_id}")
         raw = cv2.imread(str(path))
         if raw is None:
             raise FileNotFoundError(path)
@@ -36,6 +38,10 @@ def supervised_frame(public, annotations, root):
             set(public.image_id) != set(annotations.image_id)):
         raise ValueError("Annotations must match the supervised subset exactly")
     merged = public.merge(annotations, on="image_id", validate="one_to_one", sort=False)
+    if "image_sha256" in merged:
+        for row in merged.itertuples():
+            if sha256(resolve_path(root, row.image_path)) != row.image_sha256:
+                raise ValueError(f"Supervised image changed since preparation: {row.image_id}")
     for column in ("image_path", "mask_path"):
         merged[column] = merged[column].map(lambda p: str(resolve_path(root, p)))
     return merged

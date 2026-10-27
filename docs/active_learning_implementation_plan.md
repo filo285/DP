@@ -3,6 +3,13 @@
 Prepared on 20 October 2026 after reviewing the current project, training code,
 uncertainty code, dataset tables, and saved experiment reports.
 
+Implementation status, 27 October 2026: all six phases are implemented, including
+the round controller, recoverable stages, acquisition checkpoints, matched full-pool
+references, frozen test evaluation, and learning-curve summaries/graphs. See
+[usage and verification](active_learning.md). Implementation of the pipeline is
+separate from completing the full research experiment. The starting-point descriptions
+below describe the code as it existed when this plan was first written.
+
 ## 1. Objective and agreed scope
 
 Implement a reproducible simulated active learning experiment for optic disc/cup

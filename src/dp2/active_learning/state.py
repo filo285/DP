@@ -1,6 +1,8 @@
 """Strict public manifests, portable paths and reproducible identities."""
 import hashlib
 import json
+import os
+import uuid
 from pathlib import Path, PureWindowsPath
 
 import pandas as pd
@@ -15,7 +17,13 @@ def sha256(path):
 
 
 def save_json(path, value):
-    Path(path).write_text(json.dumps(value, indent=2, allow_nan=False), encoding="utf-8")
+    path = Path(path)
+    temporary = path.with_name(path.name + ".tmp-" + uuid.uuid4().hex)
+    with temporary.open("w", encoding="utf-8") as stream:
+        stream.write(json.dumps(value, indent=2, allow_nan=False))
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, path)
 
 
 def read_csv(path):
@@ -84,7 +92,8 @@ def validate_partition(train, labeled, pool, val, test):
             raise ValueError("Subset metadata differs from frozen training population")
 
 
-def write_state(output, experiment, labeled, pool, annotations, repetition, round_index):
+def write_state(output, experiment, labeled, pool, annotations, repetition, round_index,
+                smoke=False, acquisition=None):
     output = Path(output)
     validate_partition(experiment.splits["train"], labeled, pool,
                        experiment.splits["val"], experiment.splits["test"])
@@ -96,6 +105,8 @@ def write_state(output, experiment, labeled, pool, annotations, repetition, roun
         frame.to_csv(output / f"{name}.csv", index=False)
     state = {"version": 1, "experiment_sha256": experiment.digest,
              "repetition": repetition, "round": round_index,
+             "smoke": bool(smoke or experiment.config.get("smoke", False)),
+             "acquisition": acquisition,
              "labeled_ids_sha256": ids_hash(labeled.image_id),
              "pool_ids_sha256": ids_hash(pool.image_id),
              "labeled_count": len(labeled), "pool_count": len(pool),
@@ -109,6 +120,10 @@ def load_state(experiment, directory):
     state = json.loads((directory / "state.json").read_text())
     if state["experiment_sha256"] != experiment.digest:
         raise ValueError("State belongs to a different experiment")
+    if (type(state["repetition"]) is not int or not 0 <= state["repetition"] < experiment.config["repetitions"]
+            or type(state["round"]) is not int or state["round"] < 0
+            or type(state.get("smoke", False)) is not bool):
+        raise ValueError("Invalid state repetition, round or smoke flag")
     required = {"labeled.csv", "unlabeled.csv", "labeled_annotations.csv"}
     if set(state["files"]) != required:
         raise ValueError("Incomplete state manifest")

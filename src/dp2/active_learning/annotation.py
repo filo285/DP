@@ -18,7 +18,7 @@ class AnnotationStore:
         return self._records.loc[ids].reset_index()
 
 
-def reveal_selection(experiment, state_directory, selected_ids, output):
+def reveal_selection(experiment, state_directory, selected_ids, output, smoke=False, acquisition=None):
     """Explicit manual stage, not an automatic active-learning controller."""
     from .state import load_state, write_state
     state, labeled, pool, annotations = load_state(experiment, state_directory)
@@ -30,4 +30,5 @@ def reveal_selection(experiment, state_directory, selected_ids, output):
     new_pool = pool[~pool.image_id.isin(ids)].reset_index(drop=True)
     revealed = pd.concat([annotations, experiment.annotations.reveal(ids)], ignore_index=True)
     return write_state(output, experiment, new_labeled, new_pool, revealed,
-                       state["repetition"], state["round"] + 1)
+                       state["repetition"], state["round"] + 1,
+                       smoke=smoke or state.get("smoke", False), acquisition=acquisition)
